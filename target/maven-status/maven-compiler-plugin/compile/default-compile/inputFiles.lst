@@ -1,0 +1,6 @@
+/Users/sebastiantanase/hospitami-project/hostpitami-backend/src/main/java/com/hostpitami/HostpitamiBackendApplication.java
+/Users/sebastiantanase/hospitami-project/hostpitami-backend/src/main/java/com/hostpitami/api/PingController.java
+/Users/sebastiantanase/hospitami-project/hostpitami-backend/src/main/java/com/hostpitami/common/response/ApiResponse.java
+/Users/sebastiantanase/hospitami-project/hostpitami-backend/src/main/java/com/hostpitami/common/utils/ApiPaths.java
+/Users/sebastiantanase/hospitami-project/hostpitami-backend/src/main/java/com/hostpitami/domain/entity/base/BaseEntity.java
+/Users/sebastiantanase/hospitami-project/hostpitami-backend/src/main/java/com/hostpitami/domain/entity/base/TenantEntity.java

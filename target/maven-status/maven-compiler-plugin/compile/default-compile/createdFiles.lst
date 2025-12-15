@@ -1,0 +1,6 @@
+com/hostpitami/api/PingController.class
+com/hostpitami/domain/entity/base/TenantEntity.class
+com/hostpitami/HostpitamiBackendApplication.class
+com/hostpitami/common/utils/ApiPaths.class
+com/hostpitami/common/response/ApiResponse.class
+com/hostpitami/domain/entity/base/BaseEntity.class
