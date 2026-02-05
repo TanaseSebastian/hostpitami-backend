@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Getter
@@ -47,4 +48,26 @@ public class Booking extends TenantEntity {
 
     @Column(length = 500)
     private String notes;
+
+    @Column
+    private Instant holdExpiresAt;
+
+    // token pubblico per link voucher/ics senza login
+    @Column(length = 80, unique = true)
+    private String publicToken;
+
+    @Column(length = 30)
+    private String paymentStatus; // NONE, PENDING, PAID
+
+    @Column(length = 80)
+    private String guestFirstName;
+
+    @Column(length = 80)
+    private String guestLastName;
+
+    @Column(length = 120)
+    private String guestEmail;
+
+    @Column(length = 30)
+    private String guestPhone;
 }

@@ -60,4 +60,52 @@ public class Structure extends BaseEntity {
     private String checkInTime;   // "15:00"
     @Column(length = 10)
     private String checkOutTime;
+
+    // --- Stato gestione
+    @Column(nullable = false)
+    private boolean published = false;
+
+    @Column(nullable = false)
+    private boolean archived = false;
+
+    // --- Dominio / sito
+    @Column(length = 120)
+    private String domain;              // es "bnb-mario.it"
+
+    @Column(nullable = false)
+    private boolean useCustomDomain = false;
+
+    @Column(nullable = false)
+    private boolean redirectToWww = false;
+
+    // --- Branding
+    @Column(length = 200)
+    private String logoUrl;
+
+    @Column(length = 200)
+    private String coverImageUrl;
+
+    @Column(length = 80)
+    private String websiteTemplate;     // "minimal", "classic", ...
+
+    @Column(length = 20)
+    private String primaryColor;
+
+    @Column(length = 20)
+    private String accentColor;
+
+    // --- SEO
+    @Column(length = 70)
+    private String seoTitle;
+
+    @Column(length = 160)
+    private String seoDescription;
+
+    // --- Generazione sito (per esame basta così)
+    @Column(length = 30)
+    private String websiteStatus = "DRAFT"; // DRAFT | GENERATED | ERROR (string per semplicità)
+
+    private java.time.Instant lastGeneratedAt;
+
+
 }

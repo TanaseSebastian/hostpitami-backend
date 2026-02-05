@@ -1,46 +1,66 @@
 package com.hostpitami.domain.entity.room;
 
-import com.hostpitami.domain.entity.base.TenantEntity;
+import com.hostpitami.domain.entity.base.BaseEntity;
+import com.hostpitami.domain.entity.structure.Structure;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @Entity
-@Table(name = "rooms",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_rooms_tenant_code", columnNames = {"tenant_id", "code"})
-        },
+@Table(
+        name = "rooms",
         indexes = {
-                @Index(name = "ix_rooms_tenant", columnList = "tenant_id")
-        })
-public class Room extends TenantEntity {
+                @Index(name="ix_rooms_structure_id", columnList="structure_id"),
+                @Index(name="ux_rooms_structure_slug", columnList="structure_id, slug", unique = true)
+        }
+)
+public class Room extends BaseEntity {
 
-    @Column(nullable = false, length = 30)
-    private String code; // es: "CAM1", "A1", "101"
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "structure_id", nullable = false)
+    private Structure structure;
 
     @Column(nullable = false, length = 160)
-    private String name; // es: "Camera Matrimoniale"
-
-    @Column(length = 240)
-    private String shortDescription;
-
-    @Column(columnDefinition = "text")
-    private String longDescription;
+    private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 40)
     private RoomType type;
 
-    @Column(nullable = false)
-    private int maxGuests;
+    @Column(nullable = false, length = 120)
+    private String slug;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal basePricePerNight;
+    // Inventory: quante camere fisiche identiche esistono
+    @Column(nullable = false)
+    private int quantity = 1;
+
+    // Capacità
+    @Column(nullable = false)
+    private int maxAdults = 2;
 
     @Column(nullable = false)
-    private boolean active = true;
+    private int maxChildren = 0;
+
+    // Informazioni descrittive
+    @Column(length = 2000)
+    private String description;
+
+    @Column(length = 120)
+    private String bedInfo; // es: "1 matrimoniale + 1 divano letto"
+
+    @Column
+    private Integer sizeMq; // metri quadri
+
+    @Column(length = 2000)
+    private String amenities; // MVP: stringa (es: "wifi,aria_condizionata,parcheggio")
+
+    // Stato
+    @Column(nullable = false)
+    private boolean archived = false;
+
+    // Immagine cover veloce (MVP)
+    @Column(length = 300)
+    private String coverImageUrl;
 }

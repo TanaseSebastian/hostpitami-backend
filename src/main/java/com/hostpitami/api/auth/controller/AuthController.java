@@ -20,20 +20,20 @@ import java.util.UUID;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthService authService;
+    private final AuthService AuthService;
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
     private final StructureRepository structureRepository;
 
     public AuthController(
-            AuthService authService,
+            AuthService AuthService,
             JwtService jwtService,
             UserRepository userRepository,
             AccountRepository accountRepository,
             StructureRepository structureRepository
     ) {
-        this.authService = authService;
+        this.AuthService = AuthService;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
@@ -42,23 +42,23 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest req) {
-        return ResponseEntity.ok(authService.register(req));
+        return ResponseEntity.ok(AuthService.register(req));
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest req) {
-        return ResponseEntity.ok(authService.login(req));
+        return ResponseEntity.ok(AuthService.login(req));
     }
 
     @PostMapping("/forgot-password")
     public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest req) {
-        authService.forgotPassword(req);
+        AuthService.forgotPassword(req);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest req) {
-        authService.resetPassword(req);
+        AuthService.resetPassword(req);
         return ResponseEntity.ok().build();
     }
 

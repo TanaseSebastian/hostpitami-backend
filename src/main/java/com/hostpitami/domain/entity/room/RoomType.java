@@ -1,9 +1,11 @@
 package com.hostpitami.domain.entity.room;
 
 public enum RoomType {
-    SINGLE,
-    DOUBLE,
-    TRIPLE,
-    QUAD,
-    APARTMENT
+    ROOM,          // camera
+    SUITE,         // suite
+    APARTMENT,     // appartamento
+    STUDIO,        // monolocale
+    VILLA,         // villa
+    DORM,          // dormitorio / stanza condivisa
+    OTHER
 }
