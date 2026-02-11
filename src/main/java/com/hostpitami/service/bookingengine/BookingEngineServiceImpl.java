@@ -3,8 +3,11 @@ package com.hostpitami.service.bookingengine;
 import com.hostpitami.api.bookingengine.dto.*;
 import com.hostpitami.domain.entity.booking.Booking;
 import com.hostpitami.domain.entity.booking.BookingStatus;
+import com.hostpitami.domain.entity.guest.Guest;
 import com.hostpitami.domain.entity.rates.RateCalendar;
 import com.hostpitami.domain.entity.rates.RatePlan;
+import com.hostpitami.domain.entity.room.Room;
+import com.hostpitami.domain.repository.GuestRepository;
 import com.hostpitami.domain.repository.booking.BookingRepository;
 import com.hostpitami.domain.repository.rates.RateCalendarRepository;
 import com.hostpitami.domain.repository.rates.RatePlanRepository;
@@ -27,6 +30,7 @@ public class BookingEngineServiceImpl implements BookingEngineService {
     private final StructureRepository structures;
     private final RoomRepository rooms;
     private final BookingRepository bookings;
+    private final GuestRepository guests;
     private final RatePlanRepository ratePlans;
     private final RatePlanRoomRepository planRooms;
     private final RateCalendarRepository calendar;
@@ -36,6 +40,7 @@ public class BookingEngineServiceImpl implements BookingEngineService {
             StructureRepository structures,
             RoomRepository rooms,
             BookingRepository bookings,
+            GuestRepository guests,
             RatePlanRepository ratePlans,
             RatePlanRoomRepository planRooms,
             RateCalendarRepository calendar,
@@ -44,6 +49,7 @@ public class BookingEngineServiceImpl implements BookingEngineService {
         this.structures = structures;
         this.rooms = rooms;
         this.bookings = bookings;
+        this.guests = guests;
         this.ratePlans = ratePlans;
         this.planRooms = planRooms;
         this.calendar = calendar;
@@ -140,14 +146,42 @@ public class BookingEngineServiceImpl implements BookingEngineService {
     public HoldResponse hold(HoldRequest req) {
         QuoteResponse q = quote(req.quote());
 
-        var room = rooms.findById(req.quote().roomId())
+        Room room = rooms.findById(req.quote().roomId())
                 .orElseThrow(() -> new IllegalArgumentException("Room not found"));
 
-        int used = countUsedUnits(room.getId(), req.quote().checkIn(), req.quote().checkOut());
-        if (used >= room.getQuantity()) throw new IllegalStateException("No availability");
+        int used = countUsedUnits(
+                room.getId(),
+                req.quote().checkIn(),
+                req.quote().checkOut()
+        );
+
+        if (used >= room.getQuantity()) {
+            throw new IllegalStateException("No availability");
+        }
+
+        UUID tenantId = room.getStructure().getAccount().getId();
+
+        Guest guest = guests.findByTenantIdAndEmailIgnoreCase(
+                tenantId,
+                req.guest().email()
+        ).orElseGet(() -> {
+            Guest g = new Guest();
+            g.setTenantId(tenantId);
+            g.setEmail(req.guest().email());
+            return g;
+        });
+
+        guest.setFirstName(req.guest().firstName());
+        guest.setLastName(req.guest().lastName());
+        guest.setPhone(req.guest().phone());
+
+        guest = guests.save(guest);
 
         Booking b = new Booking();
+        b.setTenantId(tenantId);
         b.setRoom(room);
+        b.setGuest(guest);
+
         b.setCheckInDate(req.quote().checkIn());
         b.setCheckOutDate(req.quote().checkOut());
         b.setGuestsCount(req.quote().guestsCount());
@@ -157,7 +191,6 @@ public class BookingEngineServiceImpl implements BookingEngineService {
         b.setHoldExpiresAt(Instant.now().plus(15, ChronoUnit.MINUTES));
         b.setPublicToken(UUID.randomUUID().toString().replace("-", ""));
 
-        // dati ospite “inline”
         b.setGuestFirstName(req.guest().firstName());
         b.setGuestLastName(req.guest().lastName());
         b.setGuestEmail(req.guest().email());
@@ -173,6 +206,7 @@ public class BookingEngineServiceImpl implements BookingEngineService {
                 q.currency()
         );
     }
+
 
     @Override
     public CheckoutResponse createStripeCheckout(UUID bookingId) {

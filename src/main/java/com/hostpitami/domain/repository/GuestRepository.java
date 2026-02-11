@@ -11,5 +11,5 @@ public interface GuestRepository extends JpaRepository<Guest, UUID> {
 
     List<Guest> findByTenantId(UUID tenantId);
 
-    Optional<Guest> findByTenantIdAndEmail(UUID tenantId, String email);
+    Optional<Guest> findByTenantIdAndEmailIgnoreCase(UUID tenantId, String email);
 }

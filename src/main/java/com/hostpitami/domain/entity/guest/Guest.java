@@ -10,6 +10,12 @@ import lombok.Setter;
 @Entity
 @Table(
         name = "guests",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "ux_guests_tenant_email",
+                        columnNames = {"tenant_id", "email"}
+                )
+        },
         indexes = {
                 @Index(name = "ix_guests_tenant", columnList = "tenant_id"),
                 @Index(name = "ix_guests_tenant_email", columnList = "tenant_id,email"),

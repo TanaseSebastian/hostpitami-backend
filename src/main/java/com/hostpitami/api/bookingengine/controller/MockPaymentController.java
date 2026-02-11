@@ -33,34 +33,6 @@ public class MockPaymentController {
 
     @PostMapping("/mock-confirm/{bookingId}")
     public void mockConfirm(@PathVariable UUID bookingId) {
-
-        Booking b = bookings.findById(bookingId)
-                .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
-
-        if (b.getStatus() != BookingStatus.HOLD) {
-            throw new IllegalStateException("Booking not in HOLD");
-        }
-
-        if (b.getHoldExpiresAt() != null && b.getHoldExpiresAt().isBefore(Instant.now())) {
-            throw new IllegalStateException("Hold expired");
-        }
-
-        //conferma
-        b.setStatus(BookingStatus.CONFIRMED);
-        b.setPaymentStatus("PAID");
-        b.setHoldExpiresAt(null);
-
-        bookings.save(b);
-
-        //side-effect: email + voucher + ics
-        String voucherHtml = bookingEngineService.buildVoucherHtml(b.getPublicToken());
-        String calendarIcs = bookingEngineService.buildGuestCalendarIcs(b.getPublicToken());
-
-        mailService.sendBookingConfirmation(
-                b.getGuest().getEmail(),
-                "Prenotazione confermata",
-                voucherHtml,
-                calendarIcs
-        );
+        bookingEngineService.confirmMockPayment(bookingId);
     }
 }
