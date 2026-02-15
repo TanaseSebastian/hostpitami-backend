@@ -14,7 +14,18 @@ spring:
     enabled: false
     locations: classpath:db/migration
 
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
 security:
+  debug: true
   jwt:
     secret: "27W29fBvPQ31oTcyMavr9gmXKshXpAhD"
     expiration-seconds: 86400

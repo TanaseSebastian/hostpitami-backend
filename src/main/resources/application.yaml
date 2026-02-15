@@ -10,3 +10,6 @@ spring:
   stripe:
     secretKey: ${STRIPE_SECRET_KEY}
     webhookSecret: ${STRIPE_WEBHOOK_SECRET}
+resend:
+  api:
+    key: re_htTzteJf_hD4Ude2vRYs7fwby1fgy1RM8

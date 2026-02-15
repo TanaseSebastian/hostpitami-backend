@@ -14,6 +14,8 @@ import com.hostpitami.service.account.AccountService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.hostpitami.service.email.EmailService;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -56,6 +58,8 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordResetTokenRepository resetTokens;
 
     private final AccountService accountService;
+    private final EmailService emailService;
+    private final String frontendBaseUrl = "http://localhost:5173"; // dev fe react che sto sviluppando insieme
 
     public AuthServiceImpl(
             UserRepository users,
@@ -65,7 +69,8 @@ public class AuthServiceImpl implements AuthService {
             AccountMemberRepository members,
             StructureRepository structures,
             PasswordResetTokenRepository resetTokens,
-            AccountService accountService
+            AccountService accountService,
+            EmailService emailService
     ) {
         this.users = users;
         this.encoder = encoder;
@@ -75,6 +80,7 @@ public class AuthServiceImpl implements AuthService {
         this.structures = structures;
         this.resetTokens = resetTokens;
         this.accountService = accountService;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -170,8 +176,8 @@ public class AuthServiceImpl implements AuthService {
         );
         resetTokens.save(prt);
 
-        // MVP: log. Poi integri provider email.
-        System.out.println("[RESET PASSWORD] email=" + email + " token=" + token);
+        String resetUrl = frontendBaseUrl + "/reset-password?token=" + token + "&email=" + email;
+        emailService.sendPasswordResetEmail(email, resetUrl);
     }
 
     @Transactional

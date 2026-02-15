@@ -14,7 +14,7 @@ import com.hostpitami.domain.repository.rates.RatePlanRepository;
 import com.hostpitami.domain.repository.rates.RatePlanRoomRepository;
 import com.hostpitami.domain.repository.room.RoomRepository;
 import com.hostpitami.domain.repository.structure.StructureRepository;
-import com.hostpitami.service.mail.MailService;
+import com.hostpitami.service.email.EmailService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class BookingEngineServiceImpl implements BookingEngineService {
     private final RatePlanRepository ratePlans;
     private final RatePlanRoomRepository planRooms;
     private final RateCalendarRepository calendar;
-    private final MailService mail;
+    private final EmailService emailService;
 
     public BookingEngineServiceImpl(
             StructureRepository structures,
@@ -44,7 +44,7 @@ public class BookingEngineServiceImpl implements BookingEngineService {
             RatePlanRepository ratePlans,
             RatePlanRoomRepository planRooms,
             RateCalendarRepository calendar,
-            MailService mail
+            EmailService emailService
     ) {
         this.structures = structures;
         this.rooms = rooms;
@@ -53,7 +53,7 @@ public class BookingEngineServiceImpl implements BookingEngineService {
         this.ratePlans = ratePlans;
         this.planRooms = planRooms;
         this.calendar = calendar;
-        this.mail = mail;
+        this.emailService = emailService;
     }
 
     @Override
@@ -235,7 +235,7 @@ public class BookingEngineServiceImpl implements BookingEngineService {
         b.setHoldExpiresAt(null);
         bookings.save(b);
 
-        mail.sendBookingConfirmation(
+        emailService.sendBookingConfirmation(
                 b.getGuestEmail(),
                 "Prenotazione confermata",
                 buildVoucherHtml(b.getPublicToken()),
